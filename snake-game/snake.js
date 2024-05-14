@@ -4,10 +4,20 @@ let context = canvas.getContext('2d');
 
 // Define the size of each square on the grid
 let box = 32;
+let score = 0;
 
 // Initialize the snake to start in the middle of the canvas
 let snake = [];
 snake[0] = { x: 8 * box, y: 8 * box };
+
+// Initialize the obstacles
+let obstacles = [
+    { x: 5 * box, y: 7 * box },
+    { x: 8 * box, y: 10 * box },
+    { x: 13 * box, y: 3 * box },
+    // Add more obstacles as needed
+];
+
 
 // Set the initial direction of the snake
 let direction = "right";
@@ -32,11 +42,26 @@ function createSnake() {
     }
 }
 
+// Function to draw the obstacles
+function drawObstacles() {
+    context.fillStyle = "blue";
+    for(let i = 0; i < obstacles.length; i++) {
+        context.fillRect(obstacles[i].x, obstacles[i].y, box, box);
+    }
+}
+
 // Function to draw the food
 function drawFood() {
     context.fillStyle = "red";
     context.fillRect(food.x, food.y, box, box);
 }
+
+function drawScore() {
+    context.fillStyle = "white";
+    context.font = "16px Arial";
+    context.fillText("Score: " + score, box, box);
+}
+
 
 // Event listener to update the direction based on arrow key presses
 document.addEventListener('keydown', update);
@@ -62,12 +87,14 @@ function startGame() {
             clearInterval(game);
             alert('Game Over :(');
         }
-    }
+    }    
 
     // Draw the game elements
     createBG();
     createSnake();
     drawFood();
+    drawObstacles();
+    drawScore();
 
     // Move the snake in the current direction
     let snakeX = snake[0].x;
@@ -78,6 +105,14 @@ function startGame() {
     if (direction == "up") snakeY -= box;
     if (direction == "down") snakeY += box;
 
+    // Check for collisions with obstacles
+    for(let i = 0; i < obstacles.length; i++) {
+        if(snakeX == obstacles[i].x && snakeY == obstacles[i].y) {
+            clearInterval(game);
+            alert('You hit an obstacle! Game Over :(');
+        }
+    }
+
     // If the snake eats the food, generate a new piece of food and grow the snake
     // Otherwise, move the snake by removing the last segment
     if (snakeX != food.x || snakeY != food.y) {
@@ -85,6 +120,7 @@ function startGame() {
     } else {
         food.x = Math.floor(Math.random() * 15 + 1) * box;
         food.y = Math.floor(Math.random() * 15 + 1) * box;
+        score++;
     }
 
     // Add a new head to the snake
@@ -92,8 +128,8 @@ function startGame() {
         x: snakeX,
         y: snakeY
     }
-
     snake.unshift(newHead);
+    
 }
 
 // Start the game loop
