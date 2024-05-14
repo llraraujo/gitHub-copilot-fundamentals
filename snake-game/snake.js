@@ -73,6 +73,21 @@ function update(event) {
     if (event.keyCode == 40 && direction != "up") direction = "down";
 }
 
+function initGame() {
+    // Initialize the game variables
+    let snake = [{ x: 9 * box, y: 10 * box }];
+    let score = 0;
+    let food = {
+        x: Math.floor(Math.random() * 15 + 1) * box,
+        y: Math.floor(Math.random() * 15 + 1) * box
+    };
+    let direction;
+
+    // Start the game loop
+    let game = setInterval(startGame, 100);
+}
+
+
 // Main game loop
 function startGame() {
     // If the snake hits the edge of the canvas, wrap around to the other side
